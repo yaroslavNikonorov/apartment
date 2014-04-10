@@ -12,4 +12,26 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <bean id="myDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <property name="url" value="jdbc:postgresql://159.224.153.212:5432/apartment"/>
+        <property name="username" value="apartment"/>
+        <property name="password" value="apartmentApp"/>
+    </bean>
+
+    <bean id="mySessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="myDataSource"/>
+        <property name="packagesToScan">
+            <list>
+                <value>apartment</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <value>
+                hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+                hibernate.show_sql=true
+                hibernate.hbm2ddl.auto=update
+            </value>
+        </property>
+    </bean>
 </beans>
