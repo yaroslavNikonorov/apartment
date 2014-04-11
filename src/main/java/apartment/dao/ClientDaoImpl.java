@@ -14,7 +14,7 @@ import java.util.List;
  * Created by yar on 4/10/14.
  */
 @Repository
-public class ClientDaoImpl implements ClientDao{
+public class ClientDaoImpl implements ClientDao {
 
     @Autowired
     private SessionFactory factory;
