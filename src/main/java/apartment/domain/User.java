@@ -24,7 +24,10 @@ public class User {
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 //    private List<Group> groups;
 
+    @ElementCollection(targetClass=Role.class)
     @Enumerated(EnumType.STRING)
+    @CollectionTable(name="ROLES")
+    @Column(name="role")
     private List<Role> roles;
 
     private String phone;

@@ -23,51 +23,46 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         final User user = repository.findByUsername(s);
-        if (user == null){
-            throw new UsernameNotFoundException("no such user: "+s);
+        if (user == null) {
+            throw new UsernameNotFoundException("no such user: " + s);
         } else {
+            System.out.println(user.getUsername());
+            return new UserDetails() {
+                @Override
+                public Collection<? extends GrantedAuthority> getAuthorities() {
+                    return user.getRoles();
+                }
 
-//            Collection<Group> groups = new ArrayList<Group>();
-//            for (Group group: user.getGroups()){
-//                groups.add(new SimpleGrantedAuthority(group.getGroupname()));
-//            }
+                @Override
+                public String getPassword() {
+                    return user.getPassword();
+                }
 
-        return new UserDetails() {
-            @Override
-            public Collection<? extends GrantedAuthority> getAuthorities() {
-                return user.getRoles();
-            }
+                @Override
+                public String getUsername() {
+                    return user.getUsername();
+                }
 
-            @Override
-            public String getPassword() {
-                return user.getPassword();
-            }
+                @Override
+                public boolean isAccountNonExpired() {
+                    return true;
+                }
 
-            @Override
-            public String getUsername() {
-                return user.getUsername();
-            }
+                @Override
+                public boolean isAccountNonLocked() {
+                    return true;
+                }
 
-            @Override
-            public boolean isAccountNonExpired() {
-                return true;
-            }
+                @Override
+                public boolean isCredentialsNonExpired() {
+                    return true;
+                }
 
-            @Override
-            public boolean isAccountNonLocked() {
-                return true;
-            }
-
-            @Override
-            public boolean isCredentialsNonExpired() {
-                return true;
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return user.isEnabled();
-            }
-        };
+                @Override
+                public boolean isEnabled() {
+                    return user.isEnabled();
+                }
+            };
         }
     }
 }

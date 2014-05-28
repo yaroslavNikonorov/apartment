@@ -27,7 +27,7 @@ public class ApartmentController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String index() {
-        return "redirect:/all";
+        return "redirect:all";
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
@@ -48,6 +48,6 @@ public class ApartmentController {
 //    public String add(@RequestBody Client client) {
     public String add(@ModelAttribute Apartment apartment) {
         apartmentService.add(apartment);
-        return "redirect:/all";
+        return "redirect:all";
     }
 }

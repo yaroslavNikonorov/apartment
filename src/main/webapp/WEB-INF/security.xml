@@ -12,7 +12,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
     <http access-denied-page="/error403.jsp">
         <!--<intercept-url pattern="/login" access="permitAll" />-->
         <!--<intercept-url pattern="/logout" access="permitAll" />-->
-        <intercept-url pattern="/apartment*" access="ROLE_ADMIN,ROLE_USER"/>
+        <intercept-url pattern="/apartment/*" access="ROLE_ADMIN,ROLE_USER"/>
         <!--<intercept-url pattern="/useradd*" access="ROLE_ADMIN,ROLE_USER,ROLE_ANONYMOUS"/>-->
         <!--<intercept-url pattern="/add*" access="ROLE_ADMIN,ROLE_USER"/>-->
         <!--<intercept-url pattern="/delete/*" access="ROLE_ADMIN"/>-->

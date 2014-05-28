@@ -1,5 +1,6 @@
 <%@ page import="apartment.domain.Group" %>
 <%@ page import="apartment.domain.Role" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -11,7 +12,7 @@
     <input type="text" id="id_username" name="username" value=""></br>
     <label for="id_groups">Groups</label>
     <select multiple="multiple" size="3" id="id_groups" class="checkout_select" name="groups">
-        <%for (Role role: request.getAttribute("roles")){%>
+        <%for (Role role: (Role[])request.getAttribute("roles")){%>
         <option value=<%out.println(role.name());%>><%out.println(role.name());%></option>
         <%}%>
     </select>
