@@ -20,14 +20,14 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
                     authentication-failure-url="/login.jsp?error=true"/>
         <logout logout-url="/logout" logout-success-url="/all"/>
         <anonymous username="guest" granted-authority="ROLE_ANONYMOUS"/>
-        <remember-me user-service-ref="userDetailServiceImpl"/>
+        <remember-me user-service-ref="userServiceImpl"/>
     </http>
 
     <!--<global-method-security secured-annotations="enabled" />-->
     <!--<global-method-security jsr250-annotations="enabled" />-->
 
     <authentication-manager>
-        <authentication-provider user-service-ref="userDetailServiceImpl"/>
+        <authentication-provider user-service-ref="userServiceImpl"/>
 
         <!--<authentication-provider>-->
             <!--<user-service id="userDetailsService"/>-->

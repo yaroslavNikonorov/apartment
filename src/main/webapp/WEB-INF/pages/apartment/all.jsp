@@ -1,4 +1,5 @@
 <%@ page import="apartment.domain.Apartment" %>
+<%@ page import="apartment.domain.User" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -6,7 +7,7 @@
     <title></title>
 </head>
 <body>
-
+<h3><%out.println((String)request.getAttribute("user"));%></h3>
 <table>
     <tr>
         <td>Name</td>

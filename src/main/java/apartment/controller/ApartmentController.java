@@ -1,19 +1,15 @@
 package apartment.controller;
 
 import apartment.domain.Apartment;
-import apartment.domain.Group;
 import apartment.domain.User;
 import apartment.service.ApartmentService;
-import apartment.service.GroupService;
-import apartment.service.UserService;
-import com.sun.org.apache.regexp.internal.recompile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by yar on 4/16/14.
@@ -31,8 +27,13 @@ public class ApartmentController {
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public String listAll(ModelMap model) {
+    public String listAll(@AuthenticationPrincipal User user, ModelMap model) {
+//    public String listAll(ModelMap model) {
         model.addAttribute("apartments", apartmentService.all());
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User user = (User) authentication.getPrincipal();
+        model.addAttribute("user", user.getUsername());
+        System.out.println(user.getUsername());
         return "apartment/all";
     }
 
@@ -44,7 +45,7 @@ public class ApartmentController {
 
 //    @Secured("ROLE_USER")
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/add", method = RequestMethod.POST, consumes="text/html")
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
 //    public String add(@RequestBody Client client) {
     public String add(@ModelAttribute Apartment apartment) {
         apartmentService.add(apartment);
