@@ -1,9 +1,8 @@
 package apartment.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Collection;
+import java.util.TreeSet;
 
 /**
  * Created by yar on 5/23/14.
@@ -15,9 +14,12 @@ public class Apartment {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
-
     private String address;
+
+    @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    @OneToMany(mappedBy = "apartment")
+    @OrderBy("price")
+    private Collection<Bid> bids = new TreeSet<Bid>();
 
     public Apartment() {
     }
@@ -30,19 +32,28 @@ public class Apartment {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getAddress() {
         return address;
     }
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Collection<Bid> getBids() {
+        return bids;
+    }
+
+    public void setBids(Collection<Bid> bids) {
+        this.bids = bids;
+    }
+
+    @Override
+    public String toString() {
+        return "Apartment{" +
+                "id=" + id +
+                ", address='" + address + '\'' +
+                ", bids=" + bids +
+                '}';
     }
 }

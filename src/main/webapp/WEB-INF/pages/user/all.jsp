@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="apartment.domain.User" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -17,9 +18,11 @@
 
         for (User user : (Iterable<User>) request.getAttribute("users")) {
     %>
+    <%--<c:forEach items="${users}" var="user">--%>
     <tr>
         <td>
             <%out.println(user.getUsername());%>
+            <%--<c:out value="${user.get}"/>--%>
         </td>
         <td>
             <%out.println(user.getPhone());%>
@@ -29,6 +32,7 @@
         </td>
     </tr>
     <%}%>
+    <%--</c:forEach>--%>
     <tr>
         <td></td>
         <td>

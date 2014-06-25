@@ -5,6 +5,7 @@ import apartment.domain.User;
 import apartment.service.GroupService;
 import apartment.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,13 +38,13 @@ public class GroupController {
         return "group/all";
     }
 
-//    @Secured("ROLE_USER")
+    @Secured("ROLE_USER")
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addForm(){
         return "group/add";
     }
 
-//    @Secured("ROLE_USER")
+    @Secured("ROLE_USER")
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/add", method = RequestMethod.POST, consumes="text/html")
 //    public String add(@RequestBody Client client) {

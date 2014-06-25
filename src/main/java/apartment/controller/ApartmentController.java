@@ -1,9 +1,21 @@
 package apartment.controller;
 
+import antlr.StringUtils;
+import apartment.annotation.CookieAsObject;
 import apartment.domain.Apartment;
+import apartment.domain.Bid;
+import apartment.domain.Client;
 import apartment.domain.User;
+import apartment.repository.ApartmentRepository;
+import apartment.repository.BidRepository;
+import apartment.repository.ClientRepository;
 import apartment.service.ApartmentService;
+import apartment.service.BidService;
+import apartment.service.ClientService;
+import com.sun.deploy.net.HttpResponse;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
@@ -11,44 +23,106 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Created by yar on 4/16/14.
- */
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
+import java.net.HttpCookie;
+
 @Controller
 @RequestMapping("/apartment")
 public class ApartmentController {
 
+    private Logger logger = Logger.getLogger(ApartmentController.class);
+
     @Autowired
-    private ApartmentService apartmentService;
+    private ApartmentRepository apartmentRepository;
+
+    @Autowired
+    private BidRepository bidRepository;
+
+    @Autowired
+    private ClientRepository clientRepository;
 
     @RequestMapping(method = RequestMethod.GET)
     public String index() {
         return "redirect:all";
     }
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public String listAll(@AuthenticationPrincipal User user, ModelMap model) {
-//    public String listAll(ModelMap model) {
-        model.addAttribute("apartments", apartmentService.all());
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        User user = (User) authentication.getPrincipal();
-        model.addAttribute("user", user.getUsername());
-        System.out.println(user.getUsername());
+    @RequestMapping(value = "/all")
+    public String all(ModelMap model) {
+        model.addAttribute("apartments", apartmentRepository.findAll());
+//        for (Apartment apartment : apartmentService.all()) {
+////            logger.info("Apartment ID: "+apartment.getId());
+//            for (Bid bid : apartment.getBids()) {
+//                System.out.println("Prices: " + bid.getPrice() + "Client: " + bid.getClient().getName());
+//            }
+//        }
         return "apartment/all";
     }
 
-//    @Secured("ROLE_USER")
+
+//    @RequestMapping(value = "/all", method = RequestMethod.GET)
+//    public String listAll(@AuthenticationPrincipal User user, @CookieValue("ClientID") String clientId, ModelMap model, HttpServletResponse response) {
+//        logger.info("start all");
+////    public String listAll(@AuthenticationPrincipal User user, ModelMap model) {
+////    public String listAll(ModelMap model) {
+//        model.addAttribute("apartments", apartmentService.all());
+////        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+////        User user = (User) authentication.getPrincipal();
+//        if(user!=null){
+//            model.addAttribute("user", user.getUsername());
+//            model.addAttribute("id", user.getId().toString());
+//        } else {
+////            model.addAttribute("user", "No user");
+////            model.addAttribute("id", "No id");
+//            if (clientId==null){
+//                Client client = new Client("name");
+//                Cookie cookie = new Cookie("ClientID", client.getId().toString());
+//                cookie.setPath("/");
+//                cookie.setMaxAge(10);
+//                response.addCookie(cookie);
+//                model.addAttribute("user", client.getName());
+//                model.addAttribute("id", client.getId());
+//            } else {
+//                Client client = clientService.findById(Long.getLong(clientId));
+//                if(client!=null){
+//                    model.addAttribute("user", client.getName());
+//                    model.addAttribute("id", client.getId());
+//                } else {
+//                    model.addAttribute("user", "Client no found");
+//                    model.addAttribute("id", "no id");
+//                }
+//            }
+//        }
+////             System.out.println(user.getUsername());
+//        return "apartment/all";
+//    }
+
+    //    @Secured("ROLE_USER")
     @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public String addForm(){
+    public String addForm() {
         return "apartment/add";
     }
 
-//    @Secured("ROLE_USER")
+    //    @Secured("ROLE_USER")
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-//    public String add(@RequestBody Client client) {
     public String add(@ModelAttribute Apartment apartment) {
-        apartmentService.add(apartment);
+        apartmentRepository.save(apartment);
         return "redirect:all";
+    }
+
+    @RequestMapping(value = "/addbid")
+//    @Transactional
+    public String addBid(@RequestParam("apartmentId") String apartmentId,
+                         @RequestParam("price") String price, @CookieAsObject("ClientID") Client client) {
+        if (client != null) {
+            Apartment apartment = apartmentRepository.findOne(Long.parseLong(apartmentId));
+            if (apartment != null) {
+                bidRepository.save(new Bid(apartment, Double.parseDouble(price), client));
+            }
+            return "redirect:all";
+        }
+        return "redirect:/client/add?apartmentId="+apartmentId+"&price="+price;
     }
 }

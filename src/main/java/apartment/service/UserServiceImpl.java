@@ -9,6 +9,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeSet;
+
 /**
  * Created by yar on 5/21/14.
  */
@@ -37,5 +41,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             return user;
         }
+    }
+
+    @Override
+    public Collection<String> getNames() {
+        Collection<String> names= new TreeSet<String>();
+        for(User user: repository.findAll()){
+            names.add(user.getUsername());
+        }
+        return names;
     }
 }

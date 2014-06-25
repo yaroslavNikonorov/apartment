@@ -6,14 +6,17 @@ import apartment.domain.User;
 import apartment.service.GroupService;
 import apartment.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,33 +32,42 @@ public class UserController {
     @Autowired
     private GroupService groupService;
 
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
+//    @Secured("ROLE_ANONYMOUS")
+//    @RequestMapping(value = "/all", method = RequestMethod.GET,headers="Accept=application/json")
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public String listAll(ModelMap model) {
-        model.addAttribute("users", userService.getAll());
-        return "user/all";
+//    public @ResponseBody Iterable<User> listAll(@AuthenticationPrincipal User user, ModelMap model) {
+//    public @ResponseBody Collection<String> listAll(@CookieValue("ClientID") String clientId, HttpServletResponse response) {
+    public @ResponseBody String listAll(@CookieValue(value = "ClientID", required=false) String clientId, HttpServletResponse response) {
+        //model.addAttribute("users", userService.getAll());
+        //System.out.println(user);
+        if(clientId==null){
+            Cookie cookie = new Cookie("ClientID", "dsdsdsdsd");
+            cookie.setMaxAge(10);
+            response.addCookie(cookie);
+            return "created new";
+        }
+        return clientId;
     }
 
-//    @Secured("ROLE_USER")
+//    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addForm(ModelMap model){
         model.addAttribute("roles", Role.class.getEnumConstants());
         return "user/add";
     }
 
-//    @Secured("ROLE_USER")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-//    public String add(@RequestBody Client client) {
     public String add(@RequestParam("username") String username, @RequestParam("groups") List<Role> roles, @RequestParam("password") String password) {
         User user = new User();
         user.setUsername(username);
-        List<Group> groups = new ArrayList<Group>();
-//        for (Long id: groupIds){
-//            groups.add(groupService.findById(id));
-//        }
+//        List<Group> groups = new ArrayList<Group>();
         user.setRoles(roles);
-        user.setPassword(password);
+        user.setPassword(encoder.encode(password));
         userService.add(user);
-        return "redirect:/user/all";
+        return "redirect:all";
     }
 }

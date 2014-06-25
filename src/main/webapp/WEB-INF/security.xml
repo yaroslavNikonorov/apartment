@@ -1,10 +1,10 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
              xmlns:beans="http://www.springframework.org/schema/beans"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/security
-http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+http://www.springframework.org/schema/security/spring-security-3.2.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <!--<global-method-security pre-post-annotations="enabled" />-->
     <!--<global-method-security secured-annotations="enabled" />-->
@@ -12,7 +12,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
     <http access-denied-page="/error403.jsp">
         <!--<intercept-url pattern="/login" access="permitAll" />-->
         <!--<intercept-url pattern="/logout" access="permitAll" />-->
-        <intercept-url pattern="/apartment/*" access="ROLE_ADMIN,ROLE_USER"/>
+        <!--<intercept-url pattern="/apartment/*" access="ROLE_ADMIN,ROLE_USER"/>-->
         <!--<intercept-url pattern="/useradd*" access="ROLE_ADMIN,ROLE_USER,ROLE_ANONYMOUS"/>-->
         <!--<intercept-url pattern="/add*" access="ROLE_ADMIN,ROLE_USER"/>-->
         <!--<intercept-url pattern="/delete/*" access="ROLE_ADMIN"/>-->
@@ -20,15 +20,25 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
                     authentication-failure-url="/login.jsp?error=true"/>
         <logout logout-url="/logout" logout-success-url="/all"/>
         <anonymous username="guest" granted-authority="ROLE_ANONYMOUS"/>
-        <remember-me user-service-ref="userServiceImpl"/>
+        <remember-me user-service-ref="userServiceImpl" data-source-ref="myDataSource"/>
     </http>
 
-    <!--<global-method-security secured-annotations="enabled" />-->
-    <!--<global-method-security jsr250-annotations="enabled" />-->
+    <!--<global-method-security secured-annotations="enabled" authentication-manager-ref="myAuthManager"/>-->
+
+    <!--<mvc:annotation-driven>-->
+        <!--<mvc:argument-resolvers>-->
+            <!--<beans:bean class="org.springframework.security.web.bind.support.AuthenticationPrincipalArgumentResolver" />-->
+            <!--<beans:bean class="apartment.support.CookieAsObjectArgumentResolver"/>-->
+        <!--</mvc:argument-resolvers>-->
+    <!--</mvc:annotation-driven>-->
+
+    <beans:bean name="bcryptEncoder"
+                class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <authentication-manager>
-        <authentication-provider user-service-ref="userServiceImpl"/>
-
+        <authentication-provider user-service-ref="userServiceImpl">
+            <password-encoder ref="bcryptEncoder"/>
+        </authentication-provider>
         <!--<authentication-provider>-->
             <!--<user-service id="userDetailsService"/>-->
             <!--<user-service>-->

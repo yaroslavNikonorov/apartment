@@ -1,5 +1,6 @@
 <%@ page import="apartment.domain.Apartment" %>
-<%@ page import="apartment.domain.User" %>
+<%@ page import="apartment.domain.Bid" %>
+<%--<%@ page import="apartment.domain.User" %>--%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -7,25 +8,45 @@
     <title></title>
 </head>
 <body>
-<h3><%out.println((String)request.getAttribute("user"));%></h3>
+<%--<h3><%out.println((String)request.getAttribute("user"));%></h3>--%>
+<%--<h3><%out.println((String)request.getAttribute("id"));%></h3>--%>
 <table>
     <tr>
-        <td>Name</td>
         <td>Address</td>
+        <td>Bids</td>
+        <td></td>
     </tr>
     <%
 
-        for (Apartment apartment : (Iterable<Apartment>) request.getAttribute("apartments")) {
+        if (request.getAttribute("apartments") != null) {
+            for (Apartment apartment : (Iterable<Apartment>) request.getAttribute("apartments")) {
     %>
     <tr>
         <td>
-            <%out.println(apartment.getName());%>
+            <%out.print(apartment.getAddress());%>
         </td>
         <td>
-            <%out.println(apartment.getAddress());%>
+            <%
+                for (Bid bid : apartment.getBids()) {
+                    if(bid.getClient()!=null){
+                        out.print(bid.getClient().getName()+": "+bid.getPrice());
+//                        out.print(bid.getPrice());
+                    }
+            %> </br>
+            <%}%>
+        </td>
+        <td>
+            <form action="/apartment/addbid" method="get">
+                <input type="hidden" value="<%out.print(apartment.getId());%>" name="apartmentId">
+                <input type="text" value="" name="price">
+                <input type="submit" value="Add">
+            </form>
         </td>
     </tr>
-    <%}%>
+    <%
+            }
+        }
+    %>
     <tr>
         <td></td>
         <td>
