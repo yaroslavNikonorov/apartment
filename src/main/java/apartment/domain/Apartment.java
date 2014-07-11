@@ -17,7 +17,8 @@ public class Apartment {
     private Long id;
 
     @Column(nullable = false)
-    @NotNull @Size(min=1)
+    @NotNull
+    @Size(min=2)
     private String address;
 
     @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

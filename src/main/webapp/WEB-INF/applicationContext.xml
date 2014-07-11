@@ -19,6 +19,8 @@
 
     <jpa:repositories base-package="apartment.repository"/>
 
+    <!--<mvc:annotation-driven validator="globalValidator"/>-->
+
     <bean id="myDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.h2.Driver"/>
         <property name="url" value="jdbc:h2:mem:apartment"/>
@@ -57,13 +59,14 @@
 
     <import resource="security.xml"/>
 
-    <mvc:annotation-driven>
+    <mvc:annotation-driven validator="validator">
         <mvc:argument-resolvers>
             <beans:bean class="org.springframework.security.web.bind.support.AuthenticationPrincipalArgumentResolver" />
             <beans:bean class="apartment.support.CookieAsObjectArgumentResolver"/>
         </mvc:argument-resolvers>
     </mvc:annotation-driven>
 
-
+    <bean id="validator"
+          class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
 </beans>
