@@ -1,6 +1,8 @@
 package apartment.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,6 +15,7 @@ public class Client {
     private Long id;
 
     @Column(nullable = false)
+    @NotNull @Size(min=1)
     private String name;
     private String phone;
     private String email;

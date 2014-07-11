@@ -29,7 +29,7 @@
             <%
                 for (Bid bid : apartment.getBids()) {
                     if(bid.getClient()!=null){
-                        out.print(bid.getClient().getName()+": "+bid.getPrice());
+                        out.print(bid.getClient().getName()+": "+bid.getPrice()+", "+bid.getDate());
 //                        out.print(bid.getPrice());
                     }
             %> </br>

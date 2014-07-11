@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 /**
  * Created by yar on 6/16/14.
@@ -32,7 +33,7 @@ public class ClientController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String addClient(@ModelAttribute("client")Client client, HttpServletResponse response,
+    public String addClient(@Valid @ModelAttribute("client")Client client, HttpServletResponse response,
                             @RequestParam(value = "apartmentId", required = false) String apartmentId,
                             @RequestParam(value = "price", required = false) String price){
         clientRepository.save(client);

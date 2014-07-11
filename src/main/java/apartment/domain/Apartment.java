@@ -1,6 +1,9 @@
 package apartment.domain;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -14,6 +17,7 @@ public class Apartment {
     private Long id;
 
     @Column(nullable = false)
+    @NotNull @Size(min=1)
     private String address;
 
     @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

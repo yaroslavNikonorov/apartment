@@ -13,6 +13,7 @@ import apartment.service.ApartmentService;
 import apartment.service.BidService;
 import apartment.service.ClientService;
 import com.sun.deploy.net.HttpResponse;
+import com.sun.istack.internal.NotNull;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -21,12 +22,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.net.HttpCookie;
+import java.util.Collection;
+import java.util.TreeSet;
 
 @Controller
 @RequestMapping("/apartment")
@@ -107,7 +112,7 @@ public class ApartmentController {
     //    @Secured("ROLE_USER")
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String add(@ModelAttribute Apartment apartment) {
+    public String add(@Valid @ModelAttribute Apartment apartment) {
         apartmentRepository.save(apartment);
         return "redirect:all";
     }
@@ -115,14 +120,21 @@ public class ApartmentController {
     @RequestMapping(value = "/addbid")
 //    @Transactional
     public String addBid(@RequestParam("apartmentId") String apartmentId,
-                         @RequestParam("price") String price, @CookieAsObject("ClientID") Client client) {
+                         @NotNull @RequestParam("price") String price, @CookieAsObject("ClientID") Client client) {
         if (client != null) {
             Apartment apartment = apartmentRepository.findOne(Long.parseLong(apartmentId));
-            if (apartment != null) {
-                bidRepository.save(new Bid(apartment, Double.parseDouble(price), client));
+            if(apartment != null){
+                TreeSet<Bid> bids = new TreeSet<Bid>(apartment.getBids());
+                if(bids.size()>0 && bids.first().getPrice()<Double.parseDouble(price)){
+                    Bid bid = new Bid(apartment, Double.parseDouble(price), client);
+                    bidRepository.save(bid);
+                } else if(bids.size() == 0) {
+                    Bid bid = new Bid(apartment, Double.parseDouble(price), client);
+                    bidRepository.save(bid);
+                }
             }
             return "redirect:all";
         }
-        return "redirect:/client/add?apartmentId="+apartmentId+"&price="+price;
+        return "redirect:/client/add?apartmentId=" + apartmentId + "&price=" + price;
     }
 }
