@@ -16,9 +16,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.beans.PropertyEditorSupport;
 import java.util.TreeSet;
 
 @Controller
@@ -130,10 +132,8 @@ public class ApartmentController {
             return "redirect:/client/add?apartmentId=" + apartmentId + "&price=" + price;
         }
         try {
-            Long lApartmentId = Long.parseLong(apartmentId);
-            Apartment apartment = apartmentRepository.findOne(lApartmentId);
+            Apartment apartment = apartmentRepository.findOne(Long.parseLong(apartmentId));
             if (apartment != null) {
-                Double dPrice = Double.parseDouble(price);
                 Bid bid = new Bid(apartment, Double.parseDouble(price), client);
                 DataBinder binder = new DataBinder(bid);
                 binder.setValidator(new BidValidator());
